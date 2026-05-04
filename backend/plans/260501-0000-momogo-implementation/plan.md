@@ -22,13 +22,12 @@ MomoGo is a cashless payment solution providing digital wallet storage and QR-ba
 | user-service | 8081 | user_db (PostgreSQL) | Registration, eKYC, Auth, MFA, Bank Linking, Admin |
 | wallet-service | 8082 | wallet_db (PostgreSQL) | Wallet, Deposit, Withdraw, P2P, QR, Transaction History |
 | api-gateway | 8080 | - | JWT validation, routing, rate limiting |
-| common | shared | - | Shared DTOs, utilities, constants |
 
 ## Phase Status
 
 | Phase | Name | Status | Effort |
 |-------|------|--------|--------|
-| 01 | Project Setup | pending | 6h |
+| 01 | Project Setup (Folder Structure + Config) | **completed** | 3h |
 | 02 | user-service Core | pending | 10h |
 | 03 | wallet-service Core | pending | 12h |
 | 04 | Integration | pending | 8h |
