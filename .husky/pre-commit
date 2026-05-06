@@ -1,3 +1,15 @@
-cd frontend
-pnpm lint
-pnpm prettier --write .
+#!/bin/sh
+
+CHANGED=$(git diff --cached --name-only)
+
+if echo "$CHANGED" | grep -q "^frontend/"; then
+  echo "Linting frontend..."
+  cd frontend && pnpm lint && pnpm prettier --write .
+  echo "Building frontend..."
+  cd frontend && pnpm build
+fi
+
+if echo "$CHANGED" | grep -q "^backend/"; then
+  echo "Building backend..."
+  cd backend && ./mvnw clean compile -DskipTests
+fi
