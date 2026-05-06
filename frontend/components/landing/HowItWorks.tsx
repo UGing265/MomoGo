@@ -4,7 +4,7 @@ import { HOW_IT_WORKS } from "@/lib/landing-content";
 
 export function HowItWorks() {
   return (
-    <section className="section bg-white">
+    <section id="howitwork" className="section bg-white">
       <div className="container-main">
         <div className="text-center mb-10">
           <h2 className="text-h2 text-[var(--color-on-surface)] mb-4">

@@ -1,7 +1,6 @@
 import {
   Navigation,
   HeroSection,
-  TrustBadges,
   ComparisonSection,
   FeaturesSection,
   SecuritySection,
@@ -17,7 +16,6 @@ export default function Home() {
     <main className="flex flex-col flex-1">
       <Navigation />
       <HeroSection />
-      <TrustBadges />
       <ComparisonSection />
       <FeaturesSection />
       <SecuritySection />

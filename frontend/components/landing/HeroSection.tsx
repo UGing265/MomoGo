@@ -4,14 +4,14 @@ import { HERO_CONTENT } from "@/lib/landing-content";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-white py-16 md:py-24 lg:py-28">
+    <section className="relative overflow-hidden bg-gradient-to-br from-white via-primary/5 to-primary/10 py-16 md:py-24 lg:py-28">
       <div className="container-main">
         {/* Two Column Layout - Content LEFT, Phone RIGHT */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* LEFT: Text Content */}
           <div className="flex flex-col gap-6">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full w-fit">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 rounded-full w-fit animate-bounce">
               <span className="material-symbols-outlined text-sm text-[var(--color-primary)]">verified</span>
               <span className="text-body text-[var(--color-primary)] font-medium">
                 Được tin tưởng bởi 1M+ người dùng

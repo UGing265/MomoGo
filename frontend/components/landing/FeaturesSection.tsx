@@ -1,5 +1,7 @@
 "use client";
 
+import { Star } from "lucide-react";
+
 const FEATURES = [
   {
     id: "qr",
@@ -29,8 +31,8 @@ export function FeaturesSection() {
     <section id="features" className="section bg-[var(--color-surface)]">
       <div className="container-main">
         <div className="text-center mb-12">
-          <div className="badge mb-4">
-            <span className="material-symbols-outlined text-sm">star</span>
+          <div className="badge mb-4 animate-bounce">
+            <Star className="w-4 h-4 text-primary" />
             <span>Tính năng nổi bật</span>
           </div>
           <h2 className="text-h2 text-[var(--color-on-surface)] mb-4">

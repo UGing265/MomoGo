@@ -2,7 +2,7 @@
 
 export const HERO_CONTENT = {
   title: "MomoGo - Thanh toán nhanh, Sống thông minh",
-  subtitle: "Liên kết Vietcombank, Techcombank. Chuyển tiền tức thì - Phí 0đ",
+  subtitle: "Trải nghiệm thế hệ ví điện tử tiếp theo. Quản lý tài chính nhanh chóng, an toàn và dễ dàng, được thiết kế riêng cho phong cách sống hiện đại của người Việt.",
   primaryCta: "Bắt đầu ngay",
   secondaryCta: "Tìm hiểu thêm",
 };

@@ -1,20 +1,22 @@
 "use client";
 
+import { Star } from "lucide-react";
+
 const SECURITY_FEATURES = [
   {
-    icon: "security",
+    icon: "https://www.grandviewresearch.com/static/img/pci-dss-certified_1.png",
     title: "Chứng nhận PCI DSS",
     description: "MomoGo đạt chuẩn PCI DSS Level 1 - tiêu chuẩn bảo mật cao nhất cho ngành thanh toán",
   },
   {
-    icon: "lock",
+    icon: "https://www.watchregister.com/img/aes256.png",
     title: "Mã hóa AES-256",
     description: "Dữ liệu được mã hóa đầu cuối với thuật toán AES-256 bit - cùng tiêu chuẩn với ngân hàng",
   },
   {
-    icon: "visibility",
-    title: "Giám sát 24/7",
-    description: "Hệ thống giám sát giao dịch real-time phát hiện và ngăn chặn gian lận tức thì",
+    icon: "https://tse1.mm.bing.net/th/id/OIP.gVSFOYrCp6CFtJp0xmHwmgHaC0?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+    title: "GlobalSign Certificate",
+    description: "Chứng chỉ số GlobalSign xác thực và mã hóa giao dịch an toàn",
   },
 ];
 
@@ -23,9 +25,9 @@ export function SecuritySection() {
     <section className="section bg-gradient-to-br from-[#e9edff] to-[#fdd000]/10">
       <div className="container-main">
         <div className="text-center mb-12">
-          <div className="badge mb-4 bg-[var(--color-secondary)]/10 border border-[var(--color-secondary)]/20">
-            <span className="material-symbols-outlined text-sm text-[var(--color-secondary)]">shield</span>
-            <span className="text-[var(--color-secondary)]">Bảo mật cấp ngân hàng</span>
+          <div className="badge mb-4 bg-primary/10 border border-primary/20 animate-bounce">
+            <Star className="w-4 h-4 text-primary" />
+            <span className="text-primary">Bảo mật và An toàn</span>
           </div>
           <h2 className="text-h2 text-[var(--color-on-surface)] mb-4">
             An toàn như ngân hàng
@@ -35,49 +37,36 @@ export function SecuritySection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {SECURITY_FEATURES.map((feature, index) => (
             <div
               key={index}
               className="flex flex-col items-center text-center gap-4 p-6"
             >
-              {/* Icon Circle with gradient */}
+              {/* Image with white background */}
               <div className="relative">
-                <div className="absolute inset-0 bg-[var(--color-primary)]/20 rounded-full blur-xl" />
-                <div className="relative w-20 h-20 bg-gradient-to-br from-[var(--color-primary)] to-[#0055cc] rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
-                  <span className="material-symbols-outlined text-white text-3xl">{feature.icon}</span>
+                <div className="w-64 h-64 bg-white rounded-2xl shadow-lg flex items-center justify-center p-6">
+                  <img
+                    src={feature.icon}
+                    alt={feature.title}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
               </div>
 
               {/* Title */}
-              <h3 className="text-title text-[var(--color-on-surface)] font-semibold">
+              <h3 className="text-title text-foreground font-semibold">
                 {feature.title}
               </h3>
 
               {/* Description */}
-              <p className="text-body text-[var(--color-outline)] leading-relaxed">
+              <p className="text-body text-muted-foreground leading-relaxed">
                 {feature.description}
               </p>
             </div>
           ))}
         </div>
 
-        {/* PCI DSS Badge */}
-        <div className="mt-16 flex justify-center">
-          <div className="inline-flex items-center gap-4 px-8 py-4 bg-white rounded-2xl shadow-lg border border-[var(--color-muted)]">
-            <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-[#0055cc] rounded-xl flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-xl">verified</span>
-            </div>
-            <div>
-              <p className="text-title font-semibold text-[var(--color-on-surface)]">
-                Đạt chuẩn PCI DSS Level 1
-              </p>
-              <p className="text-caption text-[var(--color-outline)]">
-                Tiêu chuẩn bảo mật cao nhất cho thanh toán quốc tế
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

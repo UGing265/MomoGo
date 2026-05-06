@@ -1,6 +1,5 @@
 export { Navigation } from "./Navigation";
 export { HeroSection } from "./HeroSection";
-export { TrustBadges } from "./TrustBadges";
 export { ComparisonSection } from "./ComparisonSection";
 export { FeaturesSection } from "./FeaturesSection";
 export { SecuritySection } from "./SecuritySection";

@@ -30,7 +30,7 @@ export function ContactSection() {
     <section id="contact" className="section bg-white">
       <div className="container-main">
         <div className="text-center mb-12">
-          <div className="badge mb-4">
+          <div className="badge mb-4 animate-bounce">
             <span className="material-symbols-outlined text-sm">mail</span>
             <span>Liên hệ</span>
           </div>
