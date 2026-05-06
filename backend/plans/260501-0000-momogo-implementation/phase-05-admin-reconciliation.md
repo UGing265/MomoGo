@@ -51,7 +51,7 @@
 ### Non-Functional
 
 - Admin actions logged with audit trail
-- Role-based access (SUPER, REVIEWER, VIEWER)
+- Role-based access (application-level, no DB role column)
 - Dashboard load time < 2 seconds
 - Reconciliation report generation < 30 seconds
 
@@ -62,8 +62,8 @@ AdminUser (aggregate root)
 ├── id: UUID
 ├── username: String (unique)
 ├── passwordHash: String (Argon2)
-├── role: AdminRole (SUPER|REVIEWER|VIEWER)
 ├── email: String
+├── status: AdminStatus (ACTIVE|SUSPENDED)
 ├── lastLoginAt: Instant
 └── createdAt: Instant
 
@@ -114,7 +114,7 @@ GetKycQueueUseCase
 AssignKycTaskUseCase
 ├── Input: kycTaskId, adminId
 ├── Output: TaskAssignmentResult
-└── Steps: validate admin role, assign task
+└── Steps: validate admin status, assign task
 
 ApproveKycUseCase (from Phase 02, extended)
 ├── Input: kycId, adminId, approved, notes
@@ -157,13 +157,18 @@ Admin REST Controllers
 └── AdminReconciliationController (GET /api/v1/admin/reconciliation, POST /api/v1/admin/reconciliation/generate)
 ```
 
-## Admin Roles & Permissions
+## Admin Permissions (application-level, no DB role column)
 
-| Role | Dashboard | KYC Queue | Approve KYC | Flagged TX | Reconciliation |
-|------|----------|-----------|-------------|------------|----------------|
-| SUPER | View | View | Approve/Reject | Review | Generate/Approve |
-| REVIEWER | View | View | Approve/Reject | Review | View |
-| VIEWER | View | View | None | View | View |
+For MVP, admin permissions are managed via application configuration or external IdP.
+Future: add role column if needed.
+
+| Permission | SUPER | REVIEWER | VIEWER |
+|------------|-------|----------|--------|
+| Dashboard | View | View | View |
+| KYC Queue | View | View | View |
+| Approve KYC | Yes | Yes | No |
+| Flagged TX | Review | Review | View |
+| Reconciliation | Generate/Approve | View | View |
 
 ## SLA Tracking Implementation
 
@@ -280,7 +285,7 @@ Total Flagged Value: 350,000,000 VND
 ## Todo List
 
 - [ ] Create AdminUser entity and repository
-- [ ] Implement RBAC with roles (SUPER, REVIEWER, VIEWER)
+- [ ] Implement admin status-based access (application-level)
 - [ ] Create KycApprovalTask entity with SLA tracking
 - [ ] Implement GetKycQueueUseCase with SLA info
 - [ ] Create scheduled SLA breach notification job
@@ -298,7 +303,7 @@ Total Flagged Value: 350,000,000 VND
 ## Success Criteria
 
 1. Admin can view KYC queue with 24h SLA countdown
-2. Admin can approve/reject KYC with role-based permissions
+2. Admin can approve/reject KYC with admin status check (no role-based RBAC for MVP)
 3. Transactions > 50M VND automatically flagged
 4. Dashboard shows real-time aggregates (< 2s load)
 5. Daily reconciliation report generated and exportable

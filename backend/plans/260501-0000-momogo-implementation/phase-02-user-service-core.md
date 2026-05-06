@@ -106,7 +106,7 @@ AdminUser
 ├── id: UUID
 ├── username: String (unique)
 ├── passwordHash: String
-├── role: AdminRole (SUPER|REVIEWER|VIEWER)
+├── status: AdminStatus (ACTIVE|SUSPENDED)
 └── createdAt
 ```
 
