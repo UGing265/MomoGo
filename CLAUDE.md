@@ -163,7 +163,7 @@ Standards: Follow KISS, DRY, YAGNI principles"
 
 | Language | Max Lines | Action if Exceeded |
 |----------|-----------|-------------------|
-| Any | **200 lines** | Split into smaller modules |
+| Any | **300 lines** | Split into smaller modules |
 
 ### 4.4 Java/Spring Boot Standards
 
@@ -289,8 +289,9 @@ mobile/
 **Production (Phase 2):** Direct Bank API verification
 
 **Supported Banks:**
-- Vietcombank (VCB)
+- ACB
 - Techcombank (TCB)
+- Vietinbank
 
 ### 7.2 Security Requirements
 
@@ -318,8 +319,8 @@ mobile/
 
 | Document | Location | Update Trigger |
 |----------|----------|----------------|
-| System Requirements (SRS) | `docs/srs.md` | Requirements change |
-| Entity Relationship Diagram | `docs/erd.md` | Schema change |
+| System Requirements (SRS) | `docs/srs/srs.md` | Requirements change |
+| Entity Relationship Diagram | `docs/srs/erd.md` | Schema change |
 | Development Roadmap | `docs/development-roadmap.md` | Phase completion |
 | Project Changelog | `docs/project-changelog.md` | Feature/fix release |
 | Code Standards | `docs/code-standards.md` | Standards change |
@@ -475,8 +476,8 @@ cd backend && ./mvnw test
 
 | File | Purpose |
 |------|---------|
-| `docs/srs.md` | Complete requirements specification |
-| `docs/erd.md` | Database schema design |
+| `docs/srs/srs.md` | Complete requirements specification |
+| `docs/srs/erd.md` | Database schema design |
 | `docs/bank-linking-flow-draft.md` | Bank integration flows |
 
 ---
