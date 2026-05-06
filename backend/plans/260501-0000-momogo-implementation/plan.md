@@ -23,6 +23,23 @@ MomoGo is a cashless payment solution providing digital wallet storage and QR-ba
 | wallet-service | 8082 | wallet_db (PostgreSQL) | Wallet, Deposit, Withdraw, P2P, QR, Transaction History |
 | api-gateway | 8080 | - | JWT validation, routing, rate limiting |
 
+## Database Schema (after ERD fixes)
+
+### user_db (user-service)
+- `users` — phone, email, kyc_status, status
+- `kyc_submissions` — CCCD images, manual review status
+- `linked_banks` — bank_code, account_token, account_holder_name, verified_at
+- `transaction_pins` — hashed PIN with lockout
+- `admin_users` — username/password, status only (no role column)
+
+### wallet_db (wallet-service)
+- `wallets` — available_balance, pending_balance, version (optimistic lock)
+- `transactions` — sender/receiver wallet, type (DEPOSIT/WITHDRAW/P2P_IN/P2P_OUT), amount, status
+- `qr_codes` — static QR, expires 30 days
+
+### Idempotency: Handled via Redis TTL (app layer, not DB table)
+### Ledger: Removed — transactions table records balance changes directly
+
 ## Phase Status
 
 | Phase | Name | Status | Effort |
@@ -96,13 +113,29 @@ MomoGo is a cashless payment solution providing digital wallet storage and QR-ba
 - Outbox pattern: Documented in wallet-service phase but deferred until event-driven needs arise
 
 #### Action Items
-- [ ] Update Phase 02: Remove OCR adapter, add manual review workflow
-- [ ] Update Phase 03: Mark outbox as deferred (Phase 04 or later)
-- [ ] Add "Event Publishing (Future)" section to plan.md for reference
+- [x] Update Phase 02: Remove OCR adapter, add manual review workflow
+- [x] Update Phase 03: Mark outbox as deferred (Phase 04 or later)
+- [x] Add "Event Publishing (Future)" section to plan.md for reference
 
 #### Impact on Phases
 - Phase 02 (user-service): Remove FptAiOcrAdapter from infrastructure, simplify SubmitKycUseCase
 - Phase 03 (wallet-service): Outbox pattern remains in architecture docs but implementation deferred
+
+### Session 2 — 2026-05-04
+**Trigger:** ERD review and plan audit
+
+#### Changes Made
+1. **Removed `idempotency_records` table** — replaced with Redis TTL at app layer
+2. **Removed `ledger_entries` table** — wallet balance updated directly via transactions
+3. **Removed `admin_users.role` column** — no RBAC in MVP, status only
+4. **Removed `QR_PAY` transaction type** — QR payments use P2P_OUT internally
+5. **Added `verified_at`, `account_holder_name` to `linked_banks`** — already in SQL, confirmed matching ERD
+
+#### Schema Summary (updated)
+- user_db: users, kyc_submissions, linked_banks, transaction_pins, admin_users
+- wallet_db: wallets, transactions, qr_codes
+- Idempotency: Redis TTL (no DB table)
+- Ledger: removed (transactions record balance changes)
 
 ---
 

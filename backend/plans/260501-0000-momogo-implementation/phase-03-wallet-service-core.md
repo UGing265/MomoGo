@@ -10,16 +10,17 @@
 
 - **Priority:** P1 (Critical)
 - **Status:** pending
-- **Description:** Implement wallet-service core: wallet management, deposit/withdraw, P2P transfers, QR code generation/scanning, double-entry ledger, daily limit tracking, and idempotency.
+- **Description:** Implement wallet-service core: wallet management, deposit/withdraw, P2P transfers, QR code generation/scanning, daily limit tracking, and idempotency via Redis.
 
 ## Key Insights from Research
 
-1. **Ledger Pattern:** Double-entry accounting (DEBIT + CREDIT ledger entries per transaction) for audit trail integrity
-2. **Concurrency:** Hybrid approach - optimistic locking (@Version) for reads, pessimistic locking (SELECT FOR UPDATE) for fund movements
-3. **Idempotency:** idempotencyKey in dedicated table with request hash validation
-4. **Outbox Pattern:** Polling outbox table for guaranteed event publishing
+1. **Wallet Balance:** Available + pending balance tracked directly on wallet record
+2. **Concurrency:** Optimistic locking (@Version) on wallet for reads; DB-level locking for fund movements
+3. **Idempotency:** Handled via Redis TTL (app layer) — no DB table needed
+4. **Outbox Pattern:** Deferred — wallet operations atomic within single DB transaction
 5. **Daily Limits:** Redis sorted set for real-time tracking, PostgreSQL nightly reconciliation
 6. **QR Generation:** ZXing javase 3.5.3; payload format: momogo://pay/{walletId}
+7. **QR payments are P2P_OUT** — QR scan just initiates a P2P transfer
 
 ## Requirements
 
@@ -69,24 +70,14 @@ Wallet (aggregate root)
 
 Transaction
 ├── id: UUID
-├── walletId: UUID (FK)
-├── type: TransactionType (DEPOSIT|WITHDRAW|P2P_IN|P2P_OUT|QR_PAY)
+├── senderWalletId: UUID (FK, nullable - null for deposits)
+├── receiverWalletId: UUID (FK, nullable - null for withdrawals)
+├── type: TransactionType (DEPOSIT|WITHDRAW|P2P_IN|P2P_OUT)
 ├── amount: Long (VND cents)
 ├── status: TransactionStatus (PENDING|COMPLETED|FAILED|REVERSED)
-├── idempotencyKey: String (unique)
-├── referenceId: String (external reference)
+├── referenceCode: String (external reference)
 ├── description: String
 ├── createdAt, completedAt
-└── ledgerEntries: List<LedgerEntry> (1:2 - DEBIT + CREDIT)
-
-LedgerEntry (value object)
-├── id: UUID
-├── transactionId: UUID (FK)
-├── walletId: UUID (FK)
-├── entryType: EntryType (DEBIT|CREDIT)
-├── amount: Long (VND cents)
-├── balanceAfter: Long
-└── createdAt
 
 QRCode
 ├── id: UUID
@@ -97,33 +88,25 @@ QRCode
 ├── expiresAt: Instant
 ├── status: QRStatus (ACTIVE|EXPIRED|USED)
 └── createdAt
-
-IdempotencyRecord
-├── idempotencyKey: String (PK)
-├── requestHash: String
-├── responseBody: Text
-├── status: IdempotencyStatus (PROCESSING|COMPLETED|FAILED)
-├── createdAt: Instant
-└── expiresAt: Instant
 ```
 
 ## Application Layer (Use Cases)
 
 ```
 DepositUseCase
-├── Input: userId, bankAccountId, amount, idempotencyKey
+├── Input: userId, bankAccountId, amount
 ├── Output: DepositResult
-└── Steps: validate limits, lock wallet, verify bank balance, create transaction + ledger entries, publish event
+└── Steps: validate limits, lock wallet, verify bank balance, create transaction, update wallet balance
 
 WithdrawUseCase
-├── Input: userId, bankAccountId, amount, idempotencyKey, pin
+├── Input: userId, bankAccountId, amount, pin
 ├── Output: WithdrawResult
 └── Steps: validate PIN, check limits, lock wallet, create pending withdrawal, execute bank withdrawal, complete transaction
 
 P2PTransferUseCase
-├── Input: senderId, recipientPhone, amount, idempotencyKey, pin
+├── Input: senderId, recipientPhone, amount, pin
 ├── Output: P2PTransferResult
-└── Steps: validate PIN, check limits, lock both wallets, debit sender, credit recipient, create ledger entries
+└── Steps: validate PIN, check limits, lock both wallets, debit sender, credit recipient
 
 GenerateQRUseCase
 ├── Input: userId, amount (optional for dynamic)
@@ -152,20 +135,12 @@ GetHistoryUseCase
 Repositories (JPA)
 ├── JpaWalletRepository (with FOR UPDATE lock)
 ├── JpaTransactionRepository
-├── JpaLedgerEntryRepository
-├── JpaQRCodeRepository
-└── JpaIdempotencyRecordRepository
+└── JpaQRCodeRepository
 
 Services
 ├── DailyLimitTracker (Redis sorted set)
-├── IdempotencyService
-├── QRCodeGenerator (ZXing)
-└── LedgerService
-
-Event Publishers (Deferred — Phase 04+)
-├── DepositEventPublisher
-├── WithdrawEventPublisher
-└── P2PTransferEventPublisher
+├── IdempotencyService (Redis TTL)
+└── QRCodeGenerator (ZXing)
 ```
 
 ## Presentation Layer
@@ -231,8 +206,7 @@ Operations:
 ## Implementation Steps
 
 1. **Domain Entities**
-   - Create Wallet, Transaction, LedgerEntry, QRCode, IdempotencyRecord, OutboxEvent entities
-   - Implement double-entry pattern (every transaction creates 2 ledger entries)
+   - Create Wallet, Transaction, QRCode entities
    - Add optimistic locking (@Version) to Wallet
    - Implement domain events for balance changes
 
@@ -241,10 +215,9 @@ Operations:
    - Custom query for findByUserId with lock
 
 3. **Use Cases (Application Layer)**
-   - Implement all use cases with idempotency checks
+   - Implement all use cases with idempotency checks (Redis)
    - Business rule enforcement (limits, self-transfer prevention)
-   - Double-entry ledger creation
-   - Outbox event creation
+   - Outbox event creation (deferred)
 
 4. **Repository Implementations**
    - JPA repositories with pessimistic locking query
@@ -276,24 +249,24 @@ Operations:
 
 ## Todo List
 
-- [ ] Create domain entities (Wallet, Transaction, LedgerEntry, QRCode, IdempotencyRecord)
+- [ ] Create domain entities (Wallet, Transaction, QRCode)
 - [ ] Define repository interfaces with custom queries
-- [ ] Implement DepositUseCase with idempotency
-- [ ] Implement WithdrawUseCase with idempotency
+- [ ] Implement DepositUseCase with Redis idempotency
+- [ ] Implement WithdrawUseCase with Redis idempotency
 - [ ] Implement P2PTransferUseCase with distributed lock
 - [ ] Implement GenerateQRUseCase (ZXing)
-- [ ] Implement ScanQRPayUseCase
+- [ ] Implement ScanQRPayUseCase (uses P2P_OUT internally)
 - [ ] Implement GetBalanceUseCase and GetHistoryUseCase
 - [ ] Create JPA repository implementations with pessimistic locking
 - [ ] Create DailyLimitTracker (Redis sorted set)
-- [ ] Create IdempotencyService
+- [ ] Create IdempotencyService (Redis TTL)
 - [ ] Create REST controllers
 - [ ] Add global exception handler
 - [ ] Write unit tests for use cases with concurrency tests
 
 ## Success Criteria
 
-1. Deposit creates double-entry ledger and updates wallet balance
+1. Deposit creates transaction and updates wallet balance (no ledger entries)
 2. Withdrawal validates PIN and limits before execution
 3. P2P transfer atomically debit sender and credit recipient
 4. QR generation returns valid QR code (ZXing, momogo:// format)
@@ -317,7 +290,7 @@ Operations:
 - **PIN Verification:** Required for all financial operations (BR-SEC-02)
 - **Amount Validation:** Server-side validation of all amounts
 - **Idempotency:** Client-provided key prevents replay attacks
-- **Audit Trail:** Immutable ledger entries for all balance changes
+- **Audit Trail:** Transaction records with timestamps for all balance changes
 - **QR Security:** Signed payload to prevent QR forgery
 
 ## Next Steps
