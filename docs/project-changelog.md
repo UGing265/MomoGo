@@ -4,6 +4,31 @@ All notable project changes are documented here.
 
 ## [Unreleased]
 
+## [v1.1.0] - 2026-05-09
+
+### Added
+
+#### Backend Entity Models (user-service, wallet-service)
+
+**User Service Entities** (`backend/user-service/src/main/java/com/momogo/user/domain/entity/`):
+- `User` - User account with phone number, status tracking
+- `KycSubmission` - eKYC data with CCCD image URLs and verification status
+- `LinkedBank` - Bank account links with tokenized account numbers
+- `TransactionPin` - PIN storage with attempt tracking (locked after 5 attempts)
+- `AdminUser` - Admin accounts with role-based access
+
+**Wallet Service Entities** (`backend/wallet-service/src/main/java/com/momogo/wallet/domain/entity/`):
+- `Wallet` - User wallets with balance tracking and currency support
+- `Transaction` - All transaction records with type/status enums
+- `QRCode` - QR code generation with expiration tracking (30 days)
+
+**Enums**: `UserStatus`, `KycStatus`, `BankProvider`, `PinStatus`, `WalletStatus`, `Currency`, `TransactionType`, `TransactionStatus`, `QrCodeStatus`
+
+**Sample Data** (`database/`):
+- SQL files for user-service and wallet-service initial data seeding
+
+---
+
 ## [v1.0.0] - 2026-05-06
 
 ### Added
