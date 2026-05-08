@@ -2,16 +2,94 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: api-gateway
+
   cloud:
     gateway:
+      # Load balancing config
+      loadbalancer:
+        cache:
+          enabled: true
+          ttl: 60s
+
+      # Routes
       routes:
         - id: user-service
-          uri: http://localhost:8081
+          uri: lb://user-service
           predicates:
             - Path=/api/users/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userServiceCircuitBreaker
+                fallbackUri: forward:/fallback/user-service
+
         - id: wallet-service
-          uri: http://localhost:8082
+          uri: lb://wallet-service
           predicates:
             - Path=/api/wallet/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: walletServiceCircuitBreaker
+                fallbackUri: forward:/fallback/wallet-service
+
       default-filters:
         - StripPrefix=0
+
+  # Redis (for rate limiting)
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret-key-here-change-in-production}
+
+# Resilience4j Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      userServiceCircuitBreaker:
+        failureRateThreshold: 50
+        slidingWindowSize: 10
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: COUNT_BASED
+
+      walletServiceCircuitBreaker:
+        failureRateThreshold: 50
+        slidingWindowSize: 10
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: COUNT_BASED
+
+  timelimiter:
+    instances:
+      userServiceCircuitBreaker:
+        timeoutDuration: 3s
+        cancelRunningFuture: true
+
+      walletServiceCircuitBreaker:
+        timeoutDuration: 3s
+        cancelRunningFuture: true
+
+# CORS configuration
+spring.cloud.gateway.mvc:
+  cors-configurations:
+    '[/**]':
+      allowedOrigins:
+        - "http://localhost:3000"
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowedHeaders:
+        - "*"
+      allowCredentials: true
