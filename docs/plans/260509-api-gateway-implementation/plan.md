@@ -1,7 +1,7 @@
 ---
 title: "API Gateway Implementation Plan"
 description: "Implement Spring Cloud Gateway with JWT auth, rate limiting, and BE↔BE direct communication for MomoGo microservices"
-status: pending
+status: completed
 priority: P1
 effort: 8h
 branch: feat/be/services-for-entities-sql

@@ -3,7 +3,7 @@
 ## Overview
 
 - **Priority:** P1
-- **Status:** Pending
+- **Status:** Completed
 - **Effort:** 1h
 
 Configure Spring Cloud Gateway routes with `lb://` prefix for load balancing and proper path predicates.

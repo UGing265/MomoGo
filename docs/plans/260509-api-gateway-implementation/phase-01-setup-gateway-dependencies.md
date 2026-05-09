@@ -3,7 +3,7 @@
 ## Overview
 
 - **Priority:** P1
-- **Status:** Pending
+- **Status:** Completed
 - **Effort:** 1h
 
 Add required dependencies to api-gateway pom.xml for JWT, rate limiting, circuit breaker, and load balancing.

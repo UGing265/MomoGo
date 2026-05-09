@@ -3,7 +3,7 @@
 ## Overview
 
 - **Priority:** P2
-- **Status:** Pending
+- **Status:** Completed
 - **Effort:** 1.5h
 
 Add Redis-based rate limiting and Resilience4j circuit breaker for fault tolerance.

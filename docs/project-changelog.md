@@ -4,6 +4,40 @@ All notable project changes are documented here.
 
 ## [Unreleased]
 
+## [v1.2.0] - 2026-05-09
+
+### Added
+
+#### API Gateway Implementation (`backend/api-gateway/`)
+
+**Core Features:**
+- Spring Cloud Gateway (port 8080) as single entry point for frontend clients
+- JWT authentication filter with user ID extraction and header forwarding
+- Route configuration with Spring Cloud LoadBalancer (`lb://`) for service discovery
+- CORS configuration for frontend dev (localhost:3000)
+- Circuit breaker pattern with Resilience4j for fault tolerance
+- Redis-based rate limiting support (optional for MVP)
+- Fallback endpoints for service unavailability and rate limiting
+
+**Backend-to-Backend Communication:**
+- Direct REST communication between user-service and wallet-service via WebClient
+- 1-hop latency (direct) vs 2-hop (via gateway)
+- Service clients: `UserServiceClient`, `WalletServiceClient`
+- Timeout handling (3s) with graceful error responses
+
+**Dependencies Added:**
+- Spring Cloud LoadBalancer
+- Spring Security WebFlux
+- Spring Data Redis Reactive
+- Resilience4j
+- JJWT (0.12.5)
+
+**Configuration:**
+- `application.yml` with routes, filters, CORS, circuit breaker settings
+- JWT secret configuration via environment variable
+
+---
+
 ## [v1.1.0] - 2026-05-09
 
 ### Added

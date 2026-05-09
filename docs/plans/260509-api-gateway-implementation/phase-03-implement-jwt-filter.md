@@ -3,7 +3,7 @@
 ## Overview
 
 - **Priority:** P1
-- **Status:** Pending
+- **Status:** Completed
 - **Effort:** 2h
 
 Implement JWT validation filter at gateway level. Extract user ID and add to X-User-Id header for downstream services.

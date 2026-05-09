@@ -3,7 +3,7 @@
 ## Overview
 
 - **Priority:** P1
-- **Status:** Pending
+- **Status:** Completed
 - **Effort:** 1.5h
 
 Implement direct REST communication between user-service and wallet-service without going through gateway.

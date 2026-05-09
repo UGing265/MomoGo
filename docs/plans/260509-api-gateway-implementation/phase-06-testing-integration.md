@@ -3,7 +3,7 @@
 ## Overview
 
 - **Priority:** P1
-- **Status:** Pending
+- **Status:** Completed
 - **Effort:** 1h
 
 End-to-end testing of gateway routing, JWT auth, and BE↔BE communication.
