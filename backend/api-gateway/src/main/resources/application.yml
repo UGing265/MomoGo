@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: api-gateway
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
 
   cloud:
     gateway:
@@ -16,7 +18,7 @@ spring:
       # Routes
       routes:
         - id: user-service
-          uri: lb://user-service
+          uri: ${USER_SERVICE_URL:lb://user-service}
           predicates:
             - Path=/api/users/**
           filters:
@@ -26,7 +28,7 @@ spring:
                 fallbackUri: forward:/fallback/user-service
 
         - id: wallet-service
-          uri: lb://wallet-service
+          uri: ${WALLET_SERVICE_URL:lb://wallet-service}
           predicates:
             - Path=/api/wallet/**
           filters:
@@ -79,17 +81,17 @@ resilience4j:
         cancelRunningFuture: true
 
 # CORS configuration
-spring.cloud.gateway.mvc:
-  cors-configurations:
-    '[/**]':
-      allowedOrigins:
-        - "http://localhost:3000"
-      allowedMethods:
-        - GET
-        - POST
-        - PUT
-        - DELETE
-        - OPTIONS
-      allowedHeaders:
-        - "*"
-      allowCredentials: true
+  cors:
+    configurations:
+      '[/**]':
+        allowedOrigins:
+          - "http://localhost:3000"
+        allowedMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        allowedHeaders:
+          - "*"
+        allowCredentials: true
