@@ -1,7 +1,7 @@
 package com.momogo.wallet.domain.repository;
 
 import com.momogo.wallet.domain.entity.Transaction;
-import com.momogo.wallet.domain.entity.TransactionStatus;
+import com.momogo.wallet.domain.enums.TransactionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
