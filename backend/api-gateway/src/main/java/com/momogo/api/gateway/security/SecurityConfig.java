@@ -28,6 +28,7 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.GET, "/api/auth/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                         .pathMatchers("/actuator/**", "/health", "/fallback/**").permitAll()
+                        .pathMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
