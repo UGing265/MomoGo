@@ -1,7 +1,7 @@
 package com.momogo.wallet.domain.repository;
 
 import com.momogo.wallet.domain.entity.QRCode;
-import com.momogo.wallet.domain.entity.QRCodeStatus;
+import com.momogo.wallet.domain.enums.QRCodeStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

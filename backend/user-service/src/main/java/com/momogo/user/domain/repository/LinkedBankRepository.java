@@ -1,7 +1,7 @@
 package com.momogo.user.domain.repository;
 
 import com.momogo.user.domain.entity.LinkedBank;
-import com.momogo.user.domain.entity.LinkStatus;
+import com.momogo.user.domain.enums.LinkStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
